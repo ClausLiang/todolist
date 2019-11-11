@@ -1,29 +1,33 @@
 import React, {Component,Fragment} from 'react'
 import TodoItem from './TodoItem'
-import './style.css'
+import {Input,Button} from 'antd'
+import 'antd/dist/antd.css'
+import {CHANGE_INPUT_VALUE,ADD_TODO_ITEM,DELETE_TODO_ITEM} from './store/actionTypes'
+
+import store from './store'
 class TodoList extends Component{
     constructor(props){
         super(props)
-        this.state = {
-            inputValue: '',
-            list: []
-        }
+        this.state = store.getState()
         this.handleInputChange = this.handleInputChange.bind(this)
         this.handleBtnClick = this.handleBtnClick.bind(this)
         this.handleItemDel = this.handleItemDel.bind(this)
+        this.handleStoreChange = this.handleStoreChange.bind(this)
+        store.subscribe(this.handleStoreChange)
     }
     render(){
         return (
             <Fragment>
-                <div>
+                <div style={{marginLeft: '10px', marginTop: '10px'}}>
                     <label htmlFor="inputNode">请输入：</label>
-                    <input type="text"
+                    <Input type="text"
                            id='inputNode'
                            className="input"
+                           style={{width: '300px'}}
                            value={this.state.inputValue}
                            onChange={this.handleInputChange}
                     />
-                    <button onClick={this.handleBtnClick}>提交</button>
+                    <Button type='primary' style={{marginLeft: '10px'}} onClick={this.handleBtnClick}>提交</Button>
                 </div>
                 <ul>
                     {
@@ -51,57 +55,29 @@ class TodoList extends Component{
     }
 
     handleInputChange(e){
-        // 最早的写法
-        // this.setState({
-        //     inputValue: e.target.value
-        // })
-        /**
-         * 新的写法
-         */
-        const value = e.target.value
-        this.setState(()=>{
-            return {
-                inputValue: value
-            }
-        })
-        /**
-         * 上面的写法还可以这样写
-         */
-        this.setState(() => ({
-            inputValue: value
-        }))
+        const action = {
+            type: CHANGE_INPUT_VALUE,
+            value: e.target.value
+        }
+        store.dispatch(action)
     }
 
+    handleStoreChange(){
+        this.setState(store.getState())
+    }
     handleBtnClick(){
-        this.setState({
-            list: [...this.state.list, this.state.inputValue],
-            inputValue: ''
-        })
-        /**
-         * 上面的写法可以这样写
-         */
-        this.setState((prevState) => ({
-            list: [...prevState.list, prevState.inputValue]
-        }))
+        const action = {
+            type: ADD_TODO_ITEM,
+            value: ''
+        }
+        store.dispatch(action)
     }
     handleItemDel(index){
-        // 不能直接改state里的内容，拷贝一份修改，然后通过setState修改
-        // const list = [...this.state.list]
-        // list.splice(index,1)
-        // this.setState({
-        //     list: list
-        // })
-
-        /**
-         * 上面的写法可以这样写
-         */
-        this.setState((prevState) => {
-            const list = [...prevState.list]
-            list.splice(index, 1)
-            return {
-                list
-            }
-        })
+        const action = {
+            type: DELETE_TODO_ITEM,
+            value: index
+        }
+        store.dispatch(action)
     }
 
 }
