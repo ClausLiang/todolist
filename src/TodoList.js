@@ -2,7 +2,7 @@ import React, {Component,Fragment} from 'react'
 import TodoItem from './TodoItem'
 import {Input,Button} from 'antd'
 import 'antd/dist/antd.css'
-import {getInputChangeAction,addItemAction,deleteItemAction} from './store/actionCreators'
+import {getInputChangeAction,addItemAction,deleteItemAction,getTodoList} from './store/actionCreators'
 
 import store from './store'
 class TodoList extends Component{
@@ -53,6 +53,11 @@ class TodoList extends Component{
             </Fragment>
         )
     }
+    componentDidMount(){
+        const action = getTodoList()
+        store.dispatch(action)
+    }
+
 
     handleInputChange(e){
         const action = getInputChangeAction(e.target.value)
