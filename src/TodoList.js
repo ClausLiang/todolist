@@ -2,8 +2,7 @@ import React, {Component,Fragment} from 'react'
 import TodoItem from './TodoItem'
 import {Input,Button} from 'antd'
 import 'antd/dist/antd.css'
-import axios from 'axios'
-import {getInputChangeAction, addItemAction, deleteItemAction, initListAction} from './store/actionCreators'
+import {getInputChangeAction, addItemAction, deleteItemAction,sagaInit} from './store/actionCreators'
 
 import store from './store'
 class TodoList extends Component{
@@ -55,10 +54,8 @@ class TodoList extends Component{
         )
     }
     componentDidMount(){
-        axios.get('/data.json').then(res=>{
-            const action = initListAction(res.data)
-            store.dispatch(action)
-        })
+        const action = sagaInit();
+        store.dispatch(action)
     }
 
 
